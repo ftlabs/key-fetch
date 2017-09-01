@@ -32,7 +32,8 @@ app.get('/keysFor/:project', (req, res) => {
 
 function checkUser(user) {
 	if(user !== undefined) {
-		return process.env.USER_WHITELIST.indexOf(user) > -1;
+		const whitelist = (!!process.env.USER_WHITELIST)?process.env.USER_WHITELIST.split(','):[];
+		return whitelist.indexOf(user) > -1;
 	}
 
 	return false;
