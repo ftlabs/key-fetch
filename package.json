@@ -1,0 +1,27 @@
+{
+  "name": "build",
+  "version": "1.0.0",
+  "description": "Get keys for your project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ftlabs/key-fetch.git"
+  },
+  "author": "Lily Madar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ftlabs/key-fetch/issues"
+  },
+  "homepage": "https://github.com/ftlabs/key-fetch#readme",
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "express": "^4.15.4",
+    "express-enforces-ssl": "^1.1.0",
+    "helmet": "^3.8.1",
+    "s3o-middleware": "^1.8.0"
+  }
+}
