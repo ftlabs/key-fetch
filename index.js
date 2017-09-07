@@ -4,7 +4,8 @@ const s3o = require('s3o-middleware');
 const helmet = require('helmet');
 const express_enforces_ssl = require('express-enforces-ssl');
 const path = require('path');
-const { copy } = require('copy-paste');
+const hbs = require('express-hbs');
+const PROJECT_PATH = path.join(__dirname + '/project');
 
 const app = express();
 
@@ -15,7 +16,12 @@ if(process.env.NODE_ENV !== 'local') {
 }
 
 app.use(s3o);
-app.use(express.static(path.join(__dirname + '/project')));
+app.use(express.static(PROJECT_PATH));
+app.engine('hbs', hbs.express4({
+  partialsDir: PROJECT_PATH
+}));
+app.set('view engine', 'hbs');
+app.set('views', PROJECT_PATH);
 
 app.get('/keysFor/:project', (req, res) => {
 	const validUser = checkUser(req.cookies.s3o_username);
@@ -35,9 +41,8 @@ app.get('/keysFor/:project', (req, res) => {
 	}
 
 	if(response.key !== undefined) {
-		return copy(JSON.stringify(response), () => {
-			return res.sendFile(path.join(__dirname + '/project/' + req.params.project + '.html'));
-		});
+		const responseText = JSON.stringify(response);
+		return res.render('ftlabs-ftda', {creds: responseText});
 	}
 
 	res.status(response.errorType).send(response.error);
