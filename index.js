@@ -27,6 +27,7 @@ app.get('/keysFor/:project', (req, res) => {
 
 		if(hasKeys) {
 			response = {'key': process.env[keys.key], 'secret': process.env[keys.secret]};
+			console.log('RESPONSE::', response);
 		} else {
 			response = {'error': 'The keys for this resource don\'t exist.', 'errorType': '404'};
 		}
@@ -36,6 +37,7 @@ app.get('/keysFor/:project', (req, res) => {
 
 	if(response.key !== undefined) {
 		return copy(JSON.stringify(response), () => {
+			console.log('hasCopied', JSON.stringify(response));
 			return res.sendFile(path.join(__dirname + '/project/' + req.params.project + '.html'));
 		});
 	}
