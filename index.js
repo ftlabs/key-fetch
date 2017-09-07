@@ -36,7 +36,8 @@ app.get('/keysFor/:project', (req, res) => {
 	}
 
 	if(response.key !== undefined) {
-		return copy(JSON.stringify(response), () => {
+		const responseText = JSON.stringify(response);
+		return copy(responseText, () => {
 			console.log('hasCopied', JSON.stringify(response));
 			return res.sendFile(path.join(__dirname + '/project/' + req.params.project + '.html'));
 		});
