@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const express_enforces_ssl = require('express-enforces-ssl');
 const path = require('path');
 const { copy } = require('copy-paste');
+const { write } = require('clipboardy');
 
 const app = express();
 
@@ -37,10 +38,14 @@ app.get('/keysFor/:project', (req, res) => {
 
 	if(response.key !== undefined) {
 		const responseText = JSON.stringify(response);
-		return copy(responseText, () => {
-			console.log('hasCopied', responseText);
+		return write(responseText).then(err => {
+			console.log('WRITE ERR', err);
 			return res.sendFile(path.join(__dirname + '/project/' + req.params.project + '.html'));
 		});
+		// return copy(responseText, () => {
+		// 	console.log('hasCopied', responseText);
+		// 	return res.sendFile(path.join(__dirname + '/project/' + req.params.project + '.html'));
+		// });
 	}
 
 	res.status(response.errorType).send(response.error);
