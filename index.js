@@ -3,6 +3,8 @@ const express = require('express');
 const s3o = require('s3o-middleware');
 const helmet = require('helmet');
 const express_enforces_ssl = require('express-enforces-ssl');
+const path = require('path');
+const { copy } = require('copy-paste');
 
 const app = express();
 
@@ -13,21 +15,32 @@ if(process.env.NODE_ENV !== 'local') {
 }
 
 app.use(s3o);
+app.use(express.static(path.join(__dirname + '/project')));
 
 app.get('/keysFor/:project', (req, res) => {
 	const validUser = checkUser(req.cookies.s3o_username);
+	let response;
+
 	if(validUser) {
 		const keys = formatKeys(req.params.project);
 		const hasKeys = keysExist(keys);
 
 		if(hasKeys) {
-			return res.json({'key': process.env[keys.key], 'secret': process.env[keys.secret]});
+			response = {'key': process.env[keys.key], 'secret': process.env[keys.secret]};
 		} else {
-			return res.json({'error': 'The keys for this resource don\'t exist.'});
+			response = {'error': 'The keys for this resource don\'t exist.', 'errorType': '404'};
 		}
+	} else {
+		response = {'error': 'You are not allowed to get keys for this resource.', 'errorType': '403'};
 	}
 
-	return res.json({'error': 'You are not allowed to get keys for this resource.'});
+	if(response.key !== undefined) {
+		return copy(JSON.stringify(response), () => {
+			return res.sendFile(path.join(__dirname + '/project/' + req.params.project + '.html'));
+		});
+	}
+
+	res.status(response.errorType).send(response.error);
 });
 
 function checkUser(user) {
