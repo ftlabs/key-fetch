@@ -4,8 +4,7 @@ const s3o = require('s3o-middleware');
 const helmet = require('helmet');
 const express_enforces_ssl = require('express-enforces-ssl');
 const path = require('path');
-const { copy } = require('copy-paste');
-const { write } = require('clipboardy');
+const clipboard = require('copy-paste').global();
 
 const app = express();
 
@@ -28,7 +27,6 @@ app.get('/keysFor/:project', (req, res) => {
 
 		if(hasKeys) {
 			response = {'key': process.env[keys.key], 'secret': process.env[keys.secret]};
-			console.log('RESPONSE::', response);
 		} else {
 			response = {'error': 'The keys for this resource don\'t exist.', 'errorType': '404'};
 		}
@@ -38,14 +36,11 @@ app.get('/keysFor/:project', (req, res) => {
 
 	if(response.key !== undefined) {
 		const responseText = JSON.stringify(response);
-		return write(responseText).then(err => {
-			console.log('WRITE ERR', err);
+		
+		return clipboard.copy(responseText, () => {
+			console.log('hasCopied', responseText);
 			return res.sendFile(path.join(__dirname + '/project/' + req.params.project + '.html'));
 		});
-		// return copy(responseText, () => {
-		// 	console.log('hasCopied', responseText);
-		// 	return res.sendFile(path.join(__dirname + '/project/' + req.params.project + '.html'));
-		// });
 	}
 
 	res.status(response.errorType).send(response.error);
