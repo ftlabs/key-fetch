@@ -19,11 +19,11 @@
     <script async type="javascript" src="https://www.ft.com/__origami/service/build/v2/bundles/js?modules=o-fonts,o-icons,o-buttons"></script>
     <script src="/lib/clipboard.min.js" type="text/javascript"></script>
     <script>
-        const clipboard = new Clipboard('#copyCreds');
-        clipboard.on('success', e => {
+        var clipboard = new Clipboard('#copyCreds');
+        clipboard.on('success', function(e) {
             e.trigger.textContent = 'Copied';
             e.trigger.classList.add('o-buttons-icon', 'o-buttons-icon--tick');
 
-        })
+        });
     </script>
 </html>
