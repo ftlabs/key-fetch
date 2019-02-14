@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const s3o = require('s3o-middleware');
+const s3o = require('@financial-times/s3o-middleware');
 const helmet = require('helmet');
 const express_enforces_ssl = require('express-enforces-ssl');
 const path = require('path');
@@ -50,8 +50,8 @@ app.get('/keysFor/:project', (req, res) => {
 
 function checkUser(user) {
 	if(user !== undefined) {
-		const whitelist = (!!process.env.USER_WHITELIST)?process.env.USER_WHITELIST.split(','):[];
-		return whitelist.indexOf(user) > -1;
+		const allowlist = (!!process.env.USER_ALLOWLIST)?process.env.USER_ALLOWLIST.split(','):[];
+		return allowlist.indexOf(user) > -1;
 	}
 
 	return false;
